@@ -1,0 +1,9 @@
+django>=4.0
+scikit-learn
+pandas
+numpy
+joblib
+groq
+google-genai
+python-dotenv
+django-cors-headers
