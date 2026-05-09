@@ -80,7 +80,25 @@ def predict(request):
 
             if (hours_studied >= 90 and tutoring_sessions >= 15
                     and exam_anxiety <= 3 and stress_level <= 3):
-                prediction = 96.0
+                # Normalize each factor to 0.0 (threshold) → 1.0 (perfect)
+                # Positive factors: higher is better
+                hours_norm     = (hours_studied - 90) / (100 - 90)       # 90→0, 100→1
+                tutoring_norm  = (tutoring_sessions - 15) / (20 - 15)    # 15→0,  20→1
+                # Negative factors: lower is better (inverted)
+                anxiety_norm   = (3 - exam_anxiety) / (3 - 1)            #  3→0,   1→1
+                stress_norm    = (3 - stress_level) / (3 - 1)            #  3→0,   1→1
+
+                # Clamp each norm to [0, 1] to handle out-of-range inputs safely
+                norms = [
+                    max(0.0, min(1.0, hours_norm)),
+                    max(0.0, min(1.0, tutoring_norm)),
+                    max(0.0, min(1.0, anxiety_norm)),
+                    max(0.0, min(1.0, stress_norm)),
+                ]
+                perfection = sum(norms) / len(norms)   # 0.0 → 1.0
+
+                # Interpolate: threshold inputs → 96.0, perfect inputs → 100.0
+                prediction = 96.0 + perfection * (100.0 - 96.0)
 
             if prediction <= 74.9:
                 category = 'Needs Improvement'
