@@ -38,7 +38,13 @@ groq_client = Groq(api_key=groq_api_key) if groq_api_key else None
 gemini_client = genai.Client(api_key=gemini_api_key) if gemini_api_key else None
 
 def index(request):
-    return render(request, 'index.html')
+    return JsonResponse({
+        'status': 'ok',
+        'message': 'Student Performance Forecasting API is running.',
+        'endpoints': {
+            'predict': '/predict/ (POST)'
+        }
+    })
 
 @csrf_exempt
 def predict(request):
